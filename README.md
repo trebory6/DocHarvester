@@ -14,12 +14,12 @@ And exports a clean folder of Markdown files plus an `index.md`.
 
 These steps assume you have **Python 3.10+** installed and available as `python`.
 
-#### Option A (recommended): install with pipx (isolated)
+#### Option A (recommended): Install with pipx
 
 1. Clone the repo and enter it:
 
 ```bash
-git clone <YOUR_REPO_URL_HERE>
+git clone https://github.com/trebory6/DocHarvester.git
 cd DocHarvester
 ```
 
@@ -48,12 +48,12 @@ To uninstall:
 pipx uninstall docharvester
 ```
 
-#### Option B: run from a virtual environment (venv)
+#### Option B: Run from a virtual environment (venv)
 
 1. Clone the repo and enter it:
 
 ```bash
-git clone <YOUR_REPO_URL_HERE>
+git clone https://github.com/trebory6/DocHarvester.git
 cd DocHarvester
 ```
 
