@@ -1,0 +1,13 @@
+Permissions
+Whenever you share a project with a user or team, you can specify a rights
+parameter.
+This parameter controls the permissions that team or user is going to have (or has, if you request the current sharing status).
+Permissions are specified using integers.
+The following values are possible:
+| Right (int) | Meaning |
+|---|---|
+| 0 (Default) | Read only. Anything which is shared with this permission cannot be edited. |
+| 1 | Read and write. Projects shared with this permission can be read and written to by the team or user. |
+| 2 | Admin. Can do anything like read and write, but can additionally manage sharing options. |
+Team admins#
+When adding or querying a team, every member has an additional boolean value stating if it is admin or not. A team admin can also add and remove team members and also change whether a user in the team is admin or not.

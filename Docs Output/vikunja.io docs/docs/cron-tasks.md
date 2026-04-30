@@ -1,0 +1,16 @@
+How to add a cron job task
+Cron jobs are tasks which run on a predefined schedule. Vikunja uses these through a light wrapper package around the excellent github.com/robfig/cron package.
+The package exposes a cron.Schedule
+method with two arguments: The first one to define the schedule when the cron task should run, and the second one with the actual function to run at the schedule. You would then create a new function to register the actual cron task in your package.
+A basic function to register a cron task looks like this:
+func RegisterSomeCronTask() {
+err := cron.Schedule("0 \* \* \* \*", func() {
+// Do something every hour
+}
+}
+Call the register method in the FullInit()
+method of the init
+package to actually register it.
+Schedule Syntax#
+The cron syntax uses the same one you may know from unix systems.
+It is described in detail here.

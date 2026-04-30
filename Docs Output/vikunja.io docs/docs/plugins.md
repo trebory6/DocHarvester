@@ -1,0 +1,172 @@
+Plugins
+The plugin system allows you to extend the core functionality with custom features through Go plugins. This guide covers how to install, configure, and use plugins as a Vikunja system admin.
+Experimental Feature: The plugin system is still experimental and the API may change in future versions. Additionally, plugins currently only support backend functionality - there is no frontend plugin support yet.
+Overview#
+Plugins in Vikunja can:
+- Add new API endpoints
+- Listen to system events
+- Run database migrations
+- Extend core functionality without modifying Vikunja’s source code
+Vikunja supports two plugin loaders:
+- Yaegi (recommended): Loads plugins from Go source files. No compilation step needed — just drop
+.go
+source files into a directory and Vikunja interprets them at runtime using Yaegi. Works on all platforms including Windows. - Native (deprecated): Loads compiled Go shared libraries (
+.so
+files). Requires exact Go version and dependency matching. Only works on Linux and macOS.
+Yaegi plugin support is only available from Vikunja 2.3.0 onwards. The native loader is deprecated and will be removed in a future version.
+To learn more about how to develop plugins, visit the plugin development guide.
+Installation and Configuration#
+1. Enable Plugin Support#
+Plugins are disabled by default and require enabling in your Vikunja configuration:
+plugins:
+enabled: true
+dir: "plugins" # Directory containing plugins (relative to Vikunja binary)
+loader: yaegi # "yaegi" (recommended) or "native" (deprecated)
+You can also use an absolute path:
+plugins:
+enabled: true
+dir: "/path/to/your/plugins"
+loader: yaegi
+The plugins.loader
+value is validated at startup — invalid values cause a fatal error.
+2. Plugin Directory Structure#
+The directory structure depends on which loader you use.
+Yaegi Loader#
+Each plugin is a subdirectory containing .go
+source files:
+vikunja/
+├── vikunja # Main binary
+├── config.yml # Configuration file
+└── plugins/ # Plugin directory
+├── webhook-plugin/
+│ └── main.go
+└── analytics/
+└── main.go
+Native Loader (Deprecated)#
+Each plugin is a compiled .so
+file:
+vikunja/
+├── vikunja # Main binary
+├── config.yml # Configuration file
+└── plugins/ # Plugin directory
+├── webhook-plugin.so
+└── analytics.so
+3. Restart Vikunja#
+After adding plugins and updating configuration:
+# Using systemd
+sudo systemctl restart vikunja
+# Or with docker
+docker restart 
+Plugin Distribution#
+Yaegi Plugins#
+Yaegi plugins are distributed as Go source files. Since they are interpreted at runtime, there are no compilation or version-matching requirements. Simply copy the plugin source directory into your plugins folder.
+Native Plugins (Deprecated)#
+Native plugins must be compiled with the exact same Go version as your Vikunja binary. Mismatched versions will cause loading failures.
+- Check your Vikunja Go version: Look at build info or release notes
+- Ensure plugin
+.so
+files match this version - Plugins compiled for different architectures (amd64, arm64) won’t work
+- Native plugins are only supported on Linux or macOS systems
+Managing Plugins#
+Installing a Plugin#
+Yaegi plugins:
+- Copy the plugin source directory to your configured plugins directory
+- Restart Vikunja
+- Verify in the logs if the plugin has been loaded successfully
+Native plugins (deprecated):
+- Download the
+.so
+file for your architecture and Go version - Copy to your configured plugins directory:
+cp my-plugin.so /path/to/vikunja/plugins/
+- Restart Vikunja
+- Verify in the logs if the plugin has been loaded successfully
+Removing a Plugin#
+- Stop Vikunja
+- Delete the plugin directory (yaegi) or
+.so
+file (native) from the plugins directory - Restart Vikunja
+Plugin Status#
+Check Vikunja logs during startup to see loaded plugins:
+# View recent logs
+journalctl -u vikunja -n 50
+# Or if running directly
+tail -f vikunja.log
+# Or with docker
+docker logs 
+Successful plugin loading shows:
+INFO Loaded plugin example-plugin
+INFO example-plugin initialized
+Using Plugin Features#
+API Endpoints#
+Plugins can add new API endpoints. Authenticated routes are available under /api/v1/plugins/
+, unauthenticated routes under /plugins/
+.
+Authenticated Endpoints#
+Require valid JWT token or API key:
+# Example: Get user profile from auth plugin
+curl -H "Authorization: Bearer YOUR\_JWT\_TOKEN" \
+https://your-vikunja.com/api/v1/plugins/user-profile
+Public Endpoints#
+No authentication required (rate-limited):
+# Example: Webhook endpoint
+curl -X POST \
+-H "Content-Type: application/json" \
+-d '{"event": "test"}' \
+https://your-vikunja.com/plugins/webhook
+Database Changes#
+Some plugins run database migrations to add new tables or modify existing ones. These run automatically when:
+- Plugin is first loaded
+- Plugin version is upgraded
+- Vikunja starts with plugin enabled
+Troubleshooting#
+Plugin Won’t Load#
+Error: Failed to load plugin example-plugin.so: plugin.Open("example-plugin"): plugin was built with a different version of package X
+Solution: Plugin was compiled with different Go version than Vikunja. Get a compatible version, recompile, or switch to the yaegi loader.
+Error: invalid plugin entry point
+Solution: Plugin doesn’t export required NewPlugin()
+function. Contact plugin developer.
+Plugin Loads But Doesn’t Work#
+Check logs for plugin-specific errors:
+grep "plugin-name" /var/log/vikunja.log
+Common issues:
+- Plugin configuration missing or incorrect
+- Database migration failures
+- Permission issues with plugin files
+- Missing dependencies
+Routes Not Available#
+Issue: Plugin API endpoints return 404
+Solutions:
+- Check if plugin initialization succeeded
+- Ensure Vikunja was restarted after adding plugin
+- Test with curl or API client to confirm route registration
+Security Considerations#
+Plugin Trust#
+- Only install plugins from trusted sources
+- Plugins run with full Vikunja permissions
+- Malicious plugins can access your database and user data
+- Review plugin source code before installing — yaegi plugins make this easy since they are plain Go source files
+File Permissions#
+Ensure proper permissions on plugin files:
+# Plugin files should be readable by Vikunja user
+chmod -R 644 /path/to/plugins/
+chown -R vikunja:vikunja /path/to/plugins/
+Network Access#
+Plugins can make network requests. Consider:
+- Firewall rules for plugin network access
+- Monitoring outbound connections
+- Reviewing plugin network usage
+Known Limitations#
+- No Plugin Unloading: Once loaded, plugins cannot be unloaded without restarting Vikunja
+- Yaegi: Single-file plugins only (for now): The yaegi loader evaluates
+.go
+files individually, so multi-file plugins may hit order-dependency issues - Yaegi: Interpreted performance: Yaegi plugins run interpreted, not compiled. This is fine for hooks and route handlers but would be a concern for hot-path code
+- Native: Version Sensitivity: Exact Go version match required between plugin and Vikunja
+- Native: Platform Specific: Native plugins only work on Linux and macOS
+- Memory Sharing: Plugins share the same memory space as Vikunja
+Best Practices#
+- Test thoroughly in development environment first
+- Backup database before installing plugins with migrations
+- Monitor resource usage after adding new plugins
+- Keep plugins updated with Vikunja version upgrades
+- Document plugin purposes for team members
+- Prefer yaegi plugins for easier distribution and cross-platform support

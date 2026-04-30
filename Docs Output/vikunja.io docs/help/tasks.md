@@ -1,0 +1,81 @@
+Tasks
+Everything about tasks: the detail view, descriptions, labels, priorities, assignees, comments, checklists, and more.
+Tasks are the core building blocks in Vikunja. Every to-do item, action item, or piece of work lives as a task inside a project.
+Quick reference#
+- Open a task: Click it in any view. In Gantt, double-click.
+- Create a task: Use the input at the top of the list view or on the dashboard.
+- Set details while typing: Use Quick Add Magic for dates, labels, priorities, and more.
+- Move a task: Change its project in the detail view, or drag it to another project from list and Kanban views.
+Opening a task#
+Click any task in the list, Kanban, or table view to open the task detail view. In the Gantt view, double-click the task instead.
+The detail view is where you edit the task title, description, dates, labels, assignees, attachments, and everything else.
+Title#
+The task title is displayed at the top of the detail view. Click on it to edit it inline.
+Description#
+Below the title is the description editor. If the task does not have a description yet, the editor opens in edit mode so you can start typing immediately.
+The editor supports standard rich-text formatting such as headings, bold, italic, and lists. Markdown shortcuts also work, and pasted Markdown is converted automatically.
+You can upload attachments directly in the editor by dragging in a file or using the upload button.
+Right sidebar#
+The right sidebar holds the task properties and actions.
+Marking a task as done#
+Click the Done button at the top of the right sidebar to mark the task as completed. Click it again to reopen the task.
+Subscribing to a task#
+Click Subscribe to follow changes on the task. Subscribers receive notifications for comments, edits, and triggered reminders.
+You are always subscribed if you created the task.
+Favoriting a task#
+Click Favorite to add the task to the Favorites project in the sidebar. This is useful for tasks you need to return to often.
+Duplicating a task#
+Click Duplicate in the right sidebar to create a copy of the task. The duplicate includes all properties: labels, assignees, attachments, relations, and the cover image.
+Labels#
+Labels help you categorize tasks and build filters later.
+Click the labels field in the right sidebar to search for and add existing labels, or create new ones on the fly.
+See Labels for more details on creating and managing labels.
+Priority#
+Set a priority from Unset to Do Now.
+You can also use priority in filters.
+Progress#
+Set a percentage between 0 and 100 to track progress manually.
+Color#
+Assign a color to make the task stand out, especially in Kanban and Gantt views.
+Assignees#
+Assign one or more users who are responsible for completing the task.
+Only users who already have access to the project can be assigned to a task. See Sharing & Teams for how to give users access.
+Dates#
+A task can have a start date, end date, and due date. See Dates & Reminders for details.
+Attachments#
+Click Attachments in the sidebar (or press f
+) to open the file picker and upload files. You can also drag files into the description editor.
+Clicking an uploaded attachment opens a preview where possible:
+- Images (
+jpg
+,jpeg
+,png
+,gif
+,bmp
+) open inline in a modal. - PDFs open inline in a modal using your browser’s built-in PDF viewer, so you can scroll, zoom, and search without leaving the task. PDF previews are available from Vikunja 2.3.0 onwards.
+- Other file types download directly.
+A separate download button next to each attachment always downloads the file, regardless of whether it has a preview.
+Relations#
+Use relations to link tasks together, for example as subtasks, parent tasks, blockers, or related work.
+Click Add a relation, find the other task, then choose the relation type.
+See Task Relations for the full list of available relation types and how to use them.
+Moving a task#
+You can move a task to another project in two ways:
+- From the detail view: Use the project field in the right sidebar to select a different project.
+- From the list or Kanban view: Drag the task onto another project in the sidebar.
+Changing the Kanban bucket#
+If the task’s project has a manual Kanban view, the detail view shows a small bucket picker next to the project name, just below the task title. Click it to move the task to a different bucket without leaving the detail view.
+Changing the bucket this way has the same effect as dragging the task on the Kanban board: moving it into the done bucket marks the task as done, and moving it back out marks it as not done.
+The picker only appears for projects that have a regular Kanban view with manually managed buckets. Projects that use filter-based buckets do not show the picker because bucket membership is controlled by filters there.
+Comments#
+Comments are shown below the task description and use the same editor.
+You can mention other users by typing @
+followed by their username. Mentioned users will receive a notification.
+You can switch comment order between oldest-first and newest-first once the task has comments.
+Checklists#
+Use the checkbox list option in the description editor to create a checklist.
+Checklist progress appears on the task card in the list view, so you can see completion at a glance.
+Quick Add Magic#
+You can set dates, labels, priorities, assignees, and more while typing a task title. See Quick Add Magic for the full syntax.
+Hover preview#
+In the list view, hovering over a task opens a small preview with the title, description, creator, labels, and other key details.

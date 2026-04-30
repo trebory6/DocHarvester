@@ -1,0 +1,33 @@
+Metrics
+Metrics work by exposing a /metrics
+endpoint which can then be accessed by prometheus.
+To keep the load on the database minimal, metrics are stored and updated in redis.
+The metrics
+package provides several functions to create and update metrics.
+Exposing New Metrics#
+First, define a const
+with the metric key in redis. This is done in pkg/metrics/metrics.go
+.
+To expose a new metric, you need to register it in the init
+function inside of the metrics
+package like so:
+// Register total user count metric
+promauto.NewGaugeFunc(prometheus.GaugeOpts{
+Name: "vikunja\_team\_count", // The key of the metric. Must be unique.
+Help: "The total number of teams on this instance", // A description about the metric itself.
+}, func() float64 {
+count, \_ := GetCount(TeamCountKey) // TeamCountKey is the const we defined earlier.
+return float64(count)
+})
+Then you’ll need to set the metrics initial value on every startup of Vikunja.
+This is done in pkg/routes/routes.go
+to avoid cyclic imports.
+If metrics are enabled, it checks if a redis connection is available and then sets the initial values.
+A convenience function is available if the metric is based on a database struct.
+Because metrics are stored in redis, you are responsible to increase or decrease these based on criteria you define.
+To do this, use metrics.UpdateCount(value, key)
+where value
+is the amount you want to change it (you can pass negative values to decrease it) and key
+is the redis key used to define the metric.
+Using it#
+Please check out the dedicated guide.
